@@ -84,6 +84,41 @@
   cursor: grabbing;
 }
 
+.redCellLabel {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  container-type: size;
+  pointer-events: none;
+  color: var(--ink);
+  font-family: var(--font-geist-sans);
+  text-align: center;
+}
+
+.redCellLabelText {
+  width: 94%;
+  margin: 0;
+  padding: min(4cqw, 7cqh) 4.5cqw;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 7cqw;
+  background: rgba(248, 250, 252, 0.38);
+  font-size: clamp(1px, min(5.7cqw, 8.2cqh), 1.125rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.16;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+.redCellLabelText span {
+  display: block;
+}
+
+.redCellLabelText span + span {
+  margin-top: 0.46em;
+}
+
 .zoomControls {
   position: absolute;
   top: clamp(0.5rem, 1.5vmin, 0.875rem);

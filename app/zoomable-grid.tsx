@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { KeyboardEvent, PointerEvent, WheelEvent } from "react";
+import type {
+  CSSProperties,
+  KeyboardEvent,
+  PointerEvent,
+  WheelEvent,
+} from "react";
 import styles from "./home.module.css";
 
 const GRID_SIZE = 1000;
@@ -16,6 +21,7 @@ const RED_SIZE = Math.sqrt(RED_VALUE / 1_000_000);
 const RED_X = MILLION_X + (1 - RED_SIZE) / 2;
 const RED_Y = MILLION_Y + (1 - RED_SIZE) / 2;
 const RED_VISIBLE_ZOOM = 18;
+const RED_TEXT_VISIBLE_ZOOM = 70;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 512;
 const ZOOM_STEP = 1.8;
@@ -92,6 +98,19 @@ export default function ZoomableGrid() {
     const top = view.centerY - span / 2;
 
     return `${left} ${top} ${span} ${span}`;
+  }, [view]);
+
+  const redCellLabelStyle = useMemo<CSSProperties>(() => {
+    const span = GRID_SIZE / view.zoom;
+    const left = view.centerX - span / 2;
+    const top = view.centerY - span / 2;
+
+    return {
+      left: `${((RED_X - left) / span) * 100}%`,
+      top: `${((RED_Y - top) / span) * 100}%`,
+      width: `${(RED_SIZE / span) * 100}%`,
+      height: `${(RED_SIZE / span) * 100}%`,
+    };
   }, [view]);
 
   const getZoomedView = useCallback(
@@ -296,6 +315,7 @@ export default function ZoomableGrid() {
   const atMinZoom = view.zoom <= MIN_ZOOM + ZOOM_EPSILON;
   const atMaxZoom = view.zoom >= MAX_ZOOM - ZOOM_EPSILON;
   const showRedCell = view.zoom >= RED_VISIBLE_ZOOM;
+  const showRedCellText = view.zoom >= RED_TEXT_VISIBLE_ZOOM;
 
   const gridClassName = [
     styles.grid,
@@ -375,6 +395,17 @@ export default function ZoomableGrid() {
           vectorEffect="non-scaling-stroke"
         />
       </svg>
+
+      {showRedCellText ? (
+        <div className={styles.redCellLabel} style={redCellLabelStyle}>
+          <p className={styles.redCellLabelText}>
+            <span>Statistically, this is you.</span>
+            <span>
+              The median net worth of an American is $192,000.
+            </span>
+          </p>
+        </div>
+      ) : null}
 
       <div className={styles.zoomControls} aria-label="Grid zoom controls">
         <button
