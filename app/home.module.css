@@ -1,0 +1,225 @@
+.page {
+  --ink: #0f172a;
+  --muted: #64748b;
+  --paper: #f8fafc;
+  --edge: clamp(0.75rem, 2vmin, 1.5rem);
+  --gap: clamp(0.75rem, 1.6vmin, 1.25rem);
+  height: 100vh;
+  height: 100dvh;
+  padding: var(--edge);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--gap);
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(30rem, 32rem);
+  gap: var(--gap);
+  align-items: end;
+}
+
+.copy {
+  min-width: 0;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, min(6vw, 9dvh), 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.header p {
+  max-width: 42rem;
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  font-size: clamp(0.9rem, min(1.4vw, 2dvh), 1.05rem);
+  line-height: 1.45;
+}
+
+.header .rule {
+  color: var(--ink);
+  font-family: var(--font-geist-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: white;
+}
+
+.grid {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: zoom-in;
+  outline: none;
+  touch-action: none;
+  user-select: none;
+}
+
+.grid:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.75);
+  outline-offset: -3px;
+}
+
+.zoomed {
+  cursor: grab;
+}
+
+.dragging {
+  cursor: grabbing;
+}
+
+.zoomControls {
+  position: absolute;
+  top: clamp(0.5rem, 1.5vmin, 0.875rem);
+  right: clamp(0.5rem, 1.5vmin, 0.875rem);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.88);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+.zoomControls button {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.7rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.zoomControls button:hover:not(:disabled),
+.zoomControls button:focus-visible {
+  background: rgba(15, 23, 42, 0.08);
+  outline: none;
+}
+
+.zoomControls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+.zoomReadout {
+  min-width: 3.25rem;
+  color: var(--muted);
+  font-family: var(--font-geist-mono);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.zoomHint {
+  position: absolute;
+  left: clamp(0.5rem, 1.5vmin, 0.875rem);
+  bottom: clamp(0.5rem, 1.5vmin, 0.875rem);
+  margin: 0;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.84);
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1;
+  backdrop-filter: blur(14px);
+}
+
+.key {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.key div {
+  display: grid;
+  gap: 0.25rem;
+  align-content: start;
+  padding: 0.6rem;
+  background: var(--paper);
+}
+
+.key dt {
+  margin: 0;
+  font-family: var(--font-geist-mono);
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.key dd {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(0.72rem, 0.9vw, 0.85rem);
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.green {
+  color: #15803d;
+}
+
+.blue {
+  color: #1d4ed8;
+}
+
+.gold {
+  color: #b77905;
+}
+
+@media (min-width: 1200px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr) minmax(42rem, 45rem);
+  }
+
+  .key {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .header {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}
+
+@media (max-width: 640px) {
+  .key {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 560px) {
+  .header p {
+    margin-top: 0.35rem;
+    line-height: 1.3;
+  }
+
+  .key div {
+    padding: 0.45rem 0.55rem;
+  }
+}
