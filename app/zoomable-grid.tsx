@@ -6,16 +6,19 @@ import styles from "./home.module.css";
 
 const GRID_SIZE = 1000;
 const GRID_CENTER = GRID_SIZE / 2;
+const MILLION_CELL_SIZE = 1;
+const GRID_LINE_EPSILON = 0.000001;
 const BILLION_WIDTH = 40;
 const BILLION_HEIGHT = 25;
 const BILLION_X = (GRID_SIZE - BILLION_WIDTH) / 2;
 const BILLION_Y = (GRID_SIZE - BILLION_HEIGHT) / 2;
-const MILLION_X = (GRID_SIZE - 1) / 2;
-const MILLION_Y = (GRID_SIZE - 1) / 2;
+const MILLION_X = (GRID_SIZE - MILLION_CELL_SIZE) / 2;
+const MILLION_Y = (GRID_SIZE - MILLION_CELL_SIZE) / 2;
 const RED_VALUE = 190_000;
 const RED_SIZE = Math.sqrt(RED_VALUE / 1_000_000);
 const RED_X = MILLION_X + (1 - RED_SIZE) / 2;
 const RED_Y = MILLION_Y + (1 - RED_SIZE) / 2;
+const GRID_LINES_VISIBLE_ZOOM = 5;
 const RED_VISIBLE_ZOOM = 18;
 const RED_TEXT_VISIBLE_ZOOM = 70;
 const MIN_ZOOM = 1;
@@ -30,6 +33,13 @@ const INITIAL_VIEW = {
 };
 
 type View = typeof INITIAL_VIEW;
+
+type VisibleArea = {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+};
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -63,22 +73,64 @@ function formatZoom(zoom: number) {
   return zoom.toFixed(1).replace(".0", "");
 }
 
+function getMillionGridPath({ left, top, right, bottom }: VisibleArea) {
+  const segments: string[] = [];
+  const firstX =
+    MILLION_X +
+    Math.ceil((left - MILLION_X - GRID_LINE_EPSILON) / MILLION_CELL_SIZE) *
+      MILLION_CELL_SIZE;
+  const lastX =
+    MILLION_X +
+    Math.floor((right - MILLION_X + GRID_LINE_EPSILON) / MILLION_CELL_SIZE) *
+      MILLION_CELL_SIZE;
+  const firstY =
+    MILLION_Y +
+    Math.ceil((top - MILLION_Y - GRID_LINE_EPSILON) / MILLION_CELL_SIZE) *
+      MILLION_CELL_SIZE;
+  const lastY =
+    MILLION_Y +
+    Math.floor((bottom - MILLION_Y + GRID_LINE_EPSILON) / MILLION_CELL_SIZE) *
+      MILLION_CELL_SIZE;
+
+  for (let x = firstX; x <= lastX + GRID_LINE_EPSILON; x += MILLION_CELL_SIZE) {
+    segments.push(`M${x} ${top}V${bottom}`);
+  }
+
+  for (let y = firstY; y <= lastY + GRID_LINE_EPSILON; y += MILLION_CELL_SIZE) {
+    segments.push(`M${left} ${y}H${right}`);
+  }
+
+  return segments.join("");
+}
+
 export default function ZoomableGrid() {
   const lastBrowserScaleRef = useRef<number | null>(null);
   const [view, setView] = useState<View>(INITIAL_VIEW);
 
-  const viewBox = useMemo(() => {
+  const visibleArea = useMemo(() => {
     const span = GRID_SIZE / view.zoom;
     const left = view.centerX - span / 2;
     const top = view.centerY - span / 2;
 
-    return `${left} ${top} ${span} ${span}`;
+    return {
+      span,
+      left,
+      top,
+      right: left + span,
+      bottom: top + span,
+      viewBox: `${left} ${top} ${span} ${span}`,
+    };
   }, [view]);
 
+  const showMillionGrid = view.zoom >= GRID_LINES_VISIBLE_ZOOM;
+
+  const millionGridPath = useMemo(
+    () => (showMillionGrid ? getMillionGridPath(visibleArea) : ""),
+    [showMillionGrid, visibleArea],
+  );
+
   const redCellLabelStyle = useMemo<CSSProperties>(() => {
-    const span = GRID_SIZE / view.zoom;
-    const left = view.centerX - span / 2;
-    const top = view.centerY - span / 2;
+    const { span, left, top } = visibleArea;
 
     return {
       left: `${((RED_X - left) / span) * 100}%`,
@@ -86,7 +138,7 @@ export default function ZoomableGrid() {
       width: `${(RED_SIZE / span) * 100}%`,
       height: `${(RED_SIZE / span) * 100}%`,
     };
-  }, [view]);
+  }, [visibleArea]);
 
   const getZoomedView = useCallback((current: View, nextZoom: number) => {
     return normalizeView({ ...current, zoom: nextZoom });
@@ -178,7 +230,7 @@ export default function ZoomableGrid() {
     <section className={styles.stage} aria-label="Zoomable minimal scale grid">
       <svg
         className={styles.grid}
-        viewBox={viewBox}
+        viewBox={visibleArea.viewBox}
         width={GRID_SIZE}
         height={GRID_SIZE}
         role="img"
@@ -203,7 +255,13 @@ export default function ZoomableGrid() {
           height={BILLION_HEIGHT}
           fill="#2563eb"
         />
-        <rect x={MILLION_X} y={MILLION_Y} width="1" height="1" fill="#16a34a" />
+        <rect
+          x={MILLION_X}
+          y={MILLION_Y}
+          width={MILLION_CELL_SIZE}
+          height={MILLION_CELL_SIZE}
+          fill="#16a34a"
+        />
         {showRedCell ? (
           <rect
             x={RED_X}
@@ -211,6 +269,17 @@ export default function ZoomableGrid() {
             width={RED_SIZE}
             height={RED_SIZE}
             fill="#dc2626"
+          />
+        ) : null}
+        {showMillionGrid && millionGridPath ? (
+          <path
+            d={millionGridPath}
+            fill="none"
+            stroke="rgba(15, 23, 42, 0.18)"
+            strokeWidth={0.55}
+            vectorEffect="non-scaling-stroke"
+            pointerEvents="none"
+            aria-hidden="true"
           />
         ) : null}
         <rect
