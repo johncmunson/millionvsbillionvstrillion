@@ -9,12 +9,30 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const millionTittle = `${styles.tittleI} ${styles.tittleMillion}`;
+  const billionTittle = `${styles.tittleI} ${styles.tittleBillion}`;
+  const trillionTittle = `${styles.tittleI} ${styles.tittleTrillion}`;
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div className={styles.copy}>
           {/* <p className={styles.rule}>There&apos;s levels to this</p> */}
-          <h1>Million / Billion / Trillion</h1>
+          <h1>
+            {"M"}
+            <span className={millionTittle}>i</span>
+            {"ll"}
+            <span className={millionTittle}>i</span>
+            {"on / B"}
+            <span className={billionTittle}>i</span>
+            {"ll"}
+            <span className={billionTittle}>i</span>
+            {"on / Tr"}
+            <span className={trillionTittle}>i</span>
+            {"ll"}
+            <span className={trillionTittle}>i</span>
+            {"on"}
+          </h1>
           <p className="ml-1.5!">
             A million is life-changing. A billion is power. A trillion is what
             happens when power compounds for long enough. The scale is hard to

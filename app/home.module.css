@@ -2,6 +2,9 @@
   --ink: #0f172a;
   --muted: #64748b;
   --paper: #f8fafc;
+  --scale-green: #15803d;
+  --scale-blue: #1d4ed8;
+  --scale-gold: #b77905;
   --edge: clamp(0.75rem, 2vmin, 1.5rem);
   --gap: clamp(0.75rem, 1.6vmin, 1.25rem);
   height: 100vh;
@@ -31,6 +34,35 @@
   font-size: clamp(1.75rem, min(6vw, 9dvh), 4.5rem);
   line-height: 0.95;
   letter-spacing: -0.06em;
+}
+
+.tittleI {
+  --tittle-color: var(--ink);
+  --tittle-split: 35%;
+  --tittle-stem-color: var(--ink);
+  background-image: linear-gradient(
+    to bottom,
+    var(--tittle-color) 0%,
+    var(--tittle-color) var(--tittle-split),
+    var(--tittle-stem-color) var(--tittle-split),
+    var(--tittle-stem-color) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.tittleMillion {
+  --tittle-color: var(--scale-green);
+}
+
+.tittleBillion {
+  --tittle-color: var(--scale-blue);
+}
+
+.tittleTrillion {
+  --tittle-color: var(--scale-gold);
 }
 
 .header p {
@@ -198,15 +230,15 @@
 }
 
 .green {
-  color: #15803d;
+  color: var(--scale-green);
 }
 
 .blue {
-  color: #1d4ed8;
+  color: var(--scale-blue);
 }
 
 .gold {
-  color: #b77905;
+  color: var(--scale-gold);
 }
 
 @media (min-width: 1200px) {
