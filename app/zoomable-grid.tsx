@@ -190,9 +190,7 @@ export default function ZoomableGrid() {
         shapeRendering="crispEdges"
         preserveAspectRatio="none"
       >
-        <title id="minimal-grid-title">
-          One million, one billion, and one trillion as a centered zoom grid
-        </title>
+        <title id="minimal-grid-title">Scroll or double-click to zoom</title>
         <desc id="minimal-grid-desc">
           Each unit in the square represents one million. The centered green
           unit is one million. A smaller centered red square inside it
@@ -243,6 +241,9 @@ export default function ZoomableGrid() {
           <p className={styles.redCellLabelText}>
             <span>Statistically, this is you.</span>
             <span>The median net worth of an American is $192,000.</span>
+            <span className={styles.redCellSource}>
+              Source: Federal Reserve Survey of Consumer Finances
+            </span>
           </p>
         </div>
       ) : null}

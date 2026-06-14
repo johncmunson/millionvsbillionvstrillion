@@ -108,7 +108,13 @@
 }
 
 .redCellLabelText span + span {
-  margin-top: 0.46em;
+  margin-top: 0.2em;
+}
+
+.redCellLabelText .redCellSource {
+  margin-top: 0.38em;
+  font-size: 0.84em;
+  font-style: italic;
 }
 
 .zoomControls {
