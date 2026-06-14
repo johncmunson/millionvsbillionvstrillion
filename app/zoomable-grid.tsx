@@ -192,13 +192,8 @@ export default function ZoomableGrid() {
       >
         <title id="minimal-grid-title">Scroll or double-click to zoom</title>
         <desc id="minimal-grid-desc">
-          Each unit in the square represents one million. The centered green
-          unit is one million. A smaller centered red square inside it
-          represents roughly one hundred ninety thousand. A centered forty by
-          twenty-five box contains one thousand units, representing one billion.
-          The full one thousand by one thousand grid represents one trillion.
-          Scroll over the grid or use the zoom buttons to zoom into the fixed
-          center of the grid.
+          A zoomable grid illustrating the differences in scale between one
+          million, one billion, and one trillion.
         </desc>
         <rect width={GRID_SIZE} height={GRID_SIZE} fill="#d9a21b" />
         <rect
