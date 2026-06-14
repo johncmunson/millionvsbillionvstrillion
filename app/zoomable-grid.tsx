@@ -235,7 +235,7 @@ export default function ZoomableGrid() {
         <div className={styles.redCellLabel} style={redCellLabelStyle}>
           <p className={styles.redCellLabelText}>
             <span>Statistically, this is you.</span>
-            <span>The median net worth of an American is $192,000.</span>
+            <span>The median net worth of an American is $192,700.</span>
             <span className={styles.redCellSource}>
               Source: Federal Reserve Survey of Consumer Finances
             </span>
