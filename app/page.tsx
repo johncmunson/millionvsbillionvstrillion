@@ -15,11 +15,10 @@ export default function Home() {
         <div className={styles.copy}>
           {/* <p className={styles.rule}>There&apos;s levels to this</p> */}
           <h1>Million / Billion / Trillion</h1>
-          <p>
-            The centered green cell is one million. Zoom into it to reveal the
-            red square: about 190,000. The centered blue box contains 1,000
-            cells: one billion. The whole grid contains 1,000,000 cells: one
-            trillion.
+          <p className="ml-1.5!">
+            A million is life-changing. A billion is power. A trillion is what
+            happens when power compounds for long enough. The scale is hard to
+            see until you put it on a grid.
           </p>
         </div>
 
