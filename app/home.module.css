@@ -36,6 +36,11 @@
   letter-spacing: -0.06em;
 }
 
+.ampersand {
+  font-style: italic;
+  font-weight: 100;
+}
+
 .tittleI {
   --tittle-color: var(--ink);
   --tittle-split: 35%;

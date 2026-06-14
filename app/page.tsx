@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import styles from "./home.module.css";
 import ZoomableGrid from "./zoomable-grid";
+
+const domaineSans = localFont({
+  src: "./fonts/domaine-sans-display-thin-italic.woff2",
+  weight: "100",
+  style: "italic",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Minimal Scale Grid | Million vs Billion vs Trillion",
@@ -12,6 +20,7 @@ export default function Home() {
   const millionTittle = `${styles.tittleI} ${styles.tittleMillion}`;
   const billionTittle = `${styles.tittleI} ${styles.tittleBillion}`;
   const trillionTittle = `${styles.tittleI} ${styles.tittleTrillion}`;
+  const ampersandClass = `${domaineSans.className} ${styles.ampersand}`;
 
   return (
     <main className={styles.page}>
@@ -23,15 +32,19 @@ export default function Home() {
             <span className={millionTittle}>i</span>
             {"ll"}
             <span className={millionTittle}>i</span>
-            {"on / B"}
+            {"ons "}
+            <span className={ampersandClass}>&amp;</span>
+            {" B"}
             <span className={billionTittle}>i</span>
             {"ll"}
             <span className={billionTittle}>i</span>
-            {"on / Tr"}
+            {"ons "}
+            <span className={ampersandClass}>&amp;</span>
+            {" Tr"}
             <span className={trillionTittle}>i</span>
             {"ll"}
             <span className={trillionTittle}>i</span>
-            {"on"}
+            {"ons"}
           </h1>
           <p className="ml-1.5!">
             A million is life-changing. A billion is power. A trillion is what
