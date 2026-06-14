@@ -76,14 +76,6 @@
   outline-offset: -3px;
 }
 
-.zoomed {
-  cursor: grab;
-}
-
-.dragging {
-  cursor: grabbing;
-}
-
 .redCellLabel {
   position: absolute;
   z-index: 1;
@@ -164,20 +156,6 @@
   font-family: var(--font-geist-mono);
   font-size: 0.75rem;
   text-align: center;
-}
-
-.zoomHint {
-  position: absolute;
-  left: clamp(0.5rem, 1.5vmin, 0.875rem);
-  bottom: clamp(0.5rem, 1.5vmin, 0.875rem);
-  margin: 0;
-  padding: 0.35rem 0.55rem;
-  border-radius: 999px;
-  background: rgba(248, 250, 252, 0.84);
-  color: var(--muted);
-  font-size: 0.75rem;
-  line-height: 1;
-  backdrop-filter: blur(14px);
 }
 
 .key {
