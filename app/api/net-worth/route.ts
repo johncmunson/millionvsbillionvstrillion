@@ -13,6 +13,7 @@ import {
   normalizeNetWorthSources,
   readNetWorthLookupCache,
 } from "@/lib/net-worth-cache";
+import { checkRateLimit, type RateLimitResult } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
 
@@ -87,6 +88,20 @@ type NormalizedLookupOutput = {
 
 function jsonError(message: string, status: number) {
   return Response.json({ error: message }, { status });
+}
+
+function rateLimitHeaders(rateLimit: RateLimitResult) {
+  const retryAfterSeconds = Math.max(
+    0,
+    Math.ceil((rateLimit.resetAt - Date.now()) / 1000),
+  );
+
+  return {
+    "Retry-After": retryAfterSeconds.toString(),
+    "X-RateLimit-Limit": rateLimit.limit.toString(),
+    "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+    "X-RateLimit-Reset": Math.ceil(rateLimit.resetAt / 1000).toString(),
+  };
 }
 
 function normalizeAliases(aliases: string[], resolvedName: string) {
@@ -196,6 +211,20 @@ export async function POST(request: Request) {
     } catch (error) {
       console.error("Failed to read net worth lookup cache", error);
     }
+  }
+
+  try {
+    const rateLimit = await checkRateLimit(request);
+
+    if (rateLimit.rateLimited) {
+      return Response.json(
+        { error: "Rate limit exceeded" },
+        { status: 429, headers: rateLimitHeaders(rateLimit) },
+      );
+    }
+  } catch (error) {
+    console.error("Failed to check net worth rate limit", error);
+    return jsonError("Unable to process request right now.", 500);
   }
 
   try {

@@ -20,8 +20,18 @@ type HeroHeaderProps = {
 };
 
 type FigurePanelMode = "key" | "form" | "loading" | "result";
+type FigureInfoTone = "default" | "error";
 
 const FIGURE_PROMPT_TEXT = "Visualize the net worth of a public figure";
+const RATE_LIMIT_MESSAGE =
+  "You have exceeded the number of allowed daily requests. Please try again tomorrow.";
+
+class RateLimitError extends Error {
+  constructor() {
+    super(RATE_LIMIT_MESSAGE);
+    this.name = "RateLimitError";
+  }
+}
 
 function SendIcon() {
   return (
@@ -116,7 +126,9 @@ function getResultCopy(result: NetWorthLookupResult) {
   }
 
   return {
-    message: `Unable to find publicly available net worth data for ${result.name}.`,
+    message:
+      result.message?.trim() ||
+      `Unable to find publicly available net worth data for ${result.name}.`,
     sources: null,
   };
 }
@@ -133,6 +145,8 @@ export default function HeroHeader({
   const [figureName, setFigureName] = useState("");
   const [lookupResult, setLookupResult] =
     useState<NetWorthLookupResult | null>(null);
+  const [figureInfoTone, setFigureInfoTone] =
+    useState<FigureInfoTone>("default");
   const millionTittle = `${styles.tittleI} ${styles.tittleMillion}`;
   const billionTittle = `${styles.tittleI} ${styles.tittleBillion}`;
   const trillionTittle = `${styles.tittleI} ${styles.tittleTrillion}`;
@@ -155,6 +169,9 @@ export default function HeroHeader({
     () => (lookupResult ? getResultCopy(lookupResult) : null),
     [lookupResult],
   );
+  const figureInfoCopyClass = `${styles.figureInfoCopy} ${
+    figureInfoTone === "error" ? styles.figureInfoCopyError : ""
+  }`;
 
   const abortPendingRequest = () => {
     requestAbortRef.current?.abort();
@@ -166,12 +183,14 @@ export default function HeroHeader({
     setFigurePanelMode("key");
     setFigureName("");
     setLookupResult(null);
+    setFigureInfoTone("default");
     onReset();
   };
 
   const openFigureForm = () => {
     abortPendingRequest();
     setLookupResult(null);
+    setFigureInfoTone("default");
     setFigurePanelMode("form");
     onReset();
   };
@@ -206,6 +225,7 @@ export default function HeroHeader({
     const abortController = new AbortController();
     requestAbortRef.current = abortController;
     setLookupResult(null);
+    setFigureInfoTone("default");
     setFigurePanelMode("loading");
     onReset();
 
@@ -218,11 +238,26 @@ export default function HeroHeader({
         body: JSON.stringify({ name: trimmedFigureName }),
         signal: abortController.signal,
       });
-      const data = (await response.json()) as
-        | NetWorthLookupResult
-        | { error?: string };
+      let responseData: unknown = {};
+
+      try {
+        responseData = await response.json();
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          throw error;
+        }
+      }
+
+      const data =
+        responseData && typeof responseData === "object"
+          ? (responseData as NetWorthLookupResult | { error?: string })
+          : {};
 
       if (!response.ok) {
+        if (response.status === 429) {
+          throw new RateLimitError();
+        }
+
         throw new Error("error" in data ? data.error : "Lookup failed");
       }
 
@@ -232,6 +267,7 @@ export default function HeroHeader({
 
       const result = data as NetWorthLookupResult;
       setLookupResult(result);
+      setFigureInfoTone("default");
       setFigurePanelMode("result");
       onLookupResult(result);
     } catch (error) {
@@ -242,12 +278,15 @@ export default function HeroHeader({
         return;
       }
 
+      const isRateLimited = error instanceof RateLimitError;
       const fallbackResult: NetWorthLookupResult = {
         status: "not_found",
         name: trimmedFigureName,
         estimated_net_worth: null,
         sources: [],
-        message: `Unable to find publicly available net worth data for ${trimmedFigureName}.`,
+        message: isRateLimited
+          ? RATE_LIMIT_MESSAGE
+          : `Unable to find publicly available net worth data for ${trimmedFigureName}.`,
         qualifier_example: null,
       };
 
@@ -256,6 +295,7 @@ export default function HeroHeader({
       }
 
       setLookupResult(fallbackResult);
+      setFigureInfoTone(isRateLimited ? "error" : "default");
       setFigurePanelMode("result");
       onLookupResult(fallbackResult);
     } finally {
@@ -432,7 +472,7 @@ export default function HeroHeader({
           >
             {resultCopy ? (
               <>
-                <div className={styles.figureInfoCopy}>
+                <div className={figureInfoCopyClass}>
                   <p>{resultCopy.message}</p>
                   {resultCopy.sources ? (
                     <p className={styles.figureSources}>

@@ -426,6 +426,10 @@
   font-size: clamp(0.7rem, 0.78vw, 0.8rem);
 }
 
+.figureInfoCopyError > p:first-child {
+  color: var(--scale-red-dark);
+}
+
 .figureSources a {
   color: inherit;
   text-decoration-line: underline;

@@ -1,4 +1,10 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  integer,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 import type { NetWorthSource } from "../app/net-worth";
 
 export const netWorthCacheEntries = sqliteTable(
@@ -36,5 +42,25 @@ export const netWorthCacheLookupKeys = sqliteTable(
     index("net_worth_cache_lookup_keys_cache_entry_id_idx").on(
       table.cacheEntryId,
     ),
+  ],
+);
+
+export const netWorthRateLimits = sqliteTable(
+  "net_worth_rate_limits",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    ipAddress: text("ip_address").notNull(),
+    windowDate: text("window_date").notNull(),
+    requestCount: integer("request_count").notNull(),
+    resetAt: integer("reset_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("net_worth_rate_limits_ip_window_date_unique").on(
+      table.ipAddress,
+      table.windowDate,
+    ),
+    index("net_worth_rate_limits_reset_at_idx").on(table.resetAt),
   ],
 );
