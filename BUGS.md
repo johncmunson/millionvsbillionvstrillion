@@ -3,5 +3,4 @@
 - "Sources" should be singular if just one link
 - The drawn box looks too chunky when you zoom out
 - Devtools error: zoomable-grid.tsx:361 Unable to preventDefault inside passive event listener invocation.
-- "Reset" should also set the zoom-level back to 1x
 - handle values larger the $1T

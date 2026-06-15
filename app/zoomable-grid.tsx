@@ -269,6 +269,10 @@ export default function ZoomableGrid({
 
   useEffect(() => {
     if (highlightedNetWorth === null || highlightedBox === null) {
+      if (lastHighlightedNetWorthRef.current !== null) {
+        animateZoomTo(MIN_ZOOM, NET_WORTH_ZOOM_DURATION_MS);
+      }
+
       lastHighlightedNetWorthRef.current = null;
       return;
     }
