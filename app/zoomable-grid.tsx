@@ -247,20 +247,20 @@ export default function ZoomableGrid() {
           A zoomable grid illustrating the differences in scale between one
           million, one billion, and one trillion.
         </desc>
-        <rect width={GRID_SIZE} height={GRID_SIZE} fill="#d9a21b" />
+        <rect width={GRID_SIZE} height={GRID_SIZE} fill="var(--scale-gold)" />
         <rect
           x={BILLION_X}
           y={BILLION_Y}
           width={BILLION_WIDTH}
           height={BILLION_HEIGHT}
-          fill="#2563eb"
+          fill="var(--scale-blue)"
         />
         <rect
           x={MILLION_X}
           y={MILLION_Y}
           width={MILLION_CELL_SIZE}
           height={MILLION_CELL_SIZE}
-          fill="#16a34a"
+          fill="var(--scale-green)"
         />
         {showRedCell ? (
           <rect
@@ -268,7 +268,7 @@ export default function ZoomableGrid() {
             y={RED_Y}
             width={RED_SIZE}
             height={RED_SIZE}
-            fill="#dc2626"
+            fill="var(--scale-red)"
           />
         ) : null}
         {showMillionGrid && millionGridPath ? (
@@ -304,9 +304,15 @@ export default function ZoomableGrid() {
         <div className={styles.redCellLabel} style={redCellLabelStyle}>
           <p className={styles.redCellLabelText}>
             <span>Statistically, this is you.</span>
-            <span>The median net worth of an American is $192,700.</span>
+            <span>
+              The median net worth of an{" "}
+              <span className={styles.redCellNoWrap}>
+                American is $192,700.
+              </span>
+            </span>
             <span className={styles.redCellSource}>
-              Source: Federal Reserve Survey of Consumer Finances
+              Source: Federal Reserve Survey of{" "}
+              <span className={styles.redCellNoWrap}>Consumer Finances</span>
             </span>
           </p>
         </div>

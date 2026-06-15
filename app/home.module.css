@@ -1,10 +1,11 @@
 .page {
-  --ink: #0f172a;
+  --ink: #0f172aec;
   --muted: #64748b;
-  --paper: #f8fafc;
-  --scale-green: #15803d;
-  --scale-blue: #1d4ed8;
-  --scale-gold: #b77905;
+  --paper: #faf8f1;
+  --scale-green: #6fa77b;
+  --scale-blue: #4f73a6;
+  --scale-gold: #d6a84f;
+  --scale-red: #f2d8d5;
   --edge: clamp(0.75rem, 2vmin, 1.5rem);
   --gap: clamp(0.75rem, 1.6vmin, 1.25rem);
   height: 100vh;
@@ -109,7 +110,7 @@
 }
 
 .grid:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.75);
+  outline: 3px solid var(--scale-blue);
   outline-offset: -3px;
 }
 
@@ -140,12 +141,17 @@
   -webkit-font-smoothing: antialiased;
 }
 
-.redCellLabelText span {
+.redCellLabelText > span {
   display: block;
+  text-wrap: balance;
 }
 
-.redCellLabelText span + span {
+.redCellLabelText > span + span {
   margin-top: 0.2em;
+}
+
+.redCellNoWrap {
+  white-space: nowrap;
 }
 
 .redCellLabelText .redCellSource {
@@ -215,7 +221,7 @@
   gap: 0.25rem;
   align-content: start;
   padding: 0.6rem;
-  background: var(--paper);
+  background: white;
 }
 
 .key dt {
