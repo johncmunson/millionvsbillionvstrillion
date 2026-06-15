@@ -1,0 +1,166 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "cc04b12c-84e1-4e32-a589-63ee06d9bfa8",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "net_worth_cache_entries": {
+      "name": "net_worth_cache_entries",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "resolved_name": {
+          "name": "resolved_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "estimated_net_worth": {
+          "name": "estimated_net_worth",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sources": {
+          "name": "sources",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "net_worth_cache_entries_expires_at_idx": {
+          "name": "net_worth_cache_entries_expires_at_idx",
+          "columns": [
+            "expires_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "net_worth_cache_lookup_keys": {
+      "name": "net_worth_cache_lookup_keys",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "cache_entry_id": {
+          "name": "cache_entry_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "lookup_key": {
+          "name": "lookup_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "display_value": {
+          "name": "display_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "net_worth_cache_lookup_keys_lookup_key_unique": {
+          "name": "net_worth_cache_lookup_keys_lookup_key_unique",
+          "columns": [
+            "lookup_key"
+          ],
+          "isUnique": true
+        },
+        "net_worth_cache_lookup_keys_cache_entry_id_idx": {
+          "name": "net_worth_cache_lookup_keys_cache_entry_id_idx",
+          "columns": [
+            "cache_entry_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "net_worth_cache_lookup_keys_cache_entry_id_net_worth_cache_entries_id_fk": {
+          "name": "net_worth_cache_lookup_keys_cache_entry_id_net_worth_cache_entries_id_fk",
+          "tableFrom": "net_worth_cache_lookup_keys",
+          "tableTo": "net_worth_cache_entries",
+          "columnsFrom": [
+            "cache_entry_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

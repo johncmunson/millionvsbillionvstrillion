@@ -10,7 +10,7 @@ import {
   type FormEvent,
 } from "react";
 import styles from "./home.module.css";
-import { MAX_VISUALIZED_NET_WORTH } from "./net-worth";
+import { MAX_SOURCES, MAX_VISUALIZED_NET_WORTH } from "./net-worth";
 import type { NetWorthLookupResult } from "./net-worth";
 
 type HeroHeaderProps = {
@@ -101,7 +101,7 @@ function getResultCopy(result: NetWorthLookupResult) {
         netWorth,
       )}${visualizationLimitCopy}`,
       sourceLabel: result.sources.length === 1 ? "Source" : "Sources",
-      sources: result.sources,
+      sources: result.sources.slice(0, MAX_SOURCES),
     };
   }
 
@@ -439,14 +439,14 @@ export default function HeroHeader({
                       {resultCopy.sourceLabel}:{" "}
                       {resultCopy.sources.length > 0
                         ? resultCopy.sources.map((source, index) => (
-                            <Fragment key={`${source.url}-${source.name}`}>
+                            <Fragment key={`${source.url}-${source.title}`}>
                               {index > 0 ? ", " : null}
                               <a
                                 href={source.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
-                                {source.name}
+                                {source.title}
                               </a>
                             </Fragment>
                           ))
