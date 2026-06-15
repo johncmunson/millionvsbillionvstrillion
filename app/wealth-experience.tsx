@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import HeroHeader from "./hero-header";
-import { MIN_VISUALIZED_NET_WORTH } from "./net-worth";
+import {
+  MAX_VISUALIZED_NET_WORTH,
+  MIN_VISUALIZED_NET_WORTH,
+} from "./net-worth";
 import type { NetWorthLookupResult } from "./net-worth";
 import ZoomableGrid from "./zoomable-grid";
 
@@ -21,7 +24,8 @@ export default function WealthExperience({
     setHighlightedNetWorth(
       result.status === "found" &&
         result.estimated_net_worth !== null &&
-        result.estimated_net_worth >= MIN_VISUALIZED_NET_WORTH
+        result.estimated_net_worth >= MIN_VISUALIZED_NET_WORTH &&
+        result.estimated_net_worth <= MAX_VISUALIZED_NET_WORTH
         ? result.estimated_net_worth
         : null,
     );

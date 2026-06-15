@@ -10,6 +10,7 @@ import {
   type FormEvent,
 } from "react";
 import styles from "./home.module.css";
+import { MAX_VISUALIZED_NET_WORTH } from "./net-worth";
 import type { NetWorthLookupResult } from "./net-worth";
 
 type HeroHeaderProps = {
@@ -89,10 +90,16 @@ function formatNetWorth(value: number) {
 
 function getResultCopy(result: NetWorthLookupResult) {
   if (result.status === "found" && result.estimated_net_worth !== null) {
+    const netWorth = result.estimated_net_worth;
+    const visualizationLimitCopy =
+      netWorth > MAX_VISUALIZED_NET_WORTH
+        ? ", an amount larger than what can be visualized on our grid!"
+        : ".";
+
     return {
       message: `${result.name} has an approximate net worth of ${formatNetWorth(
-        result.estimated_net_worth,
-      )}.`,
+        netWorth,
+      )}${visualizationLimitCopy}`,
       sourceLabel: result.sources.length === 1 ? "Source" : "Sources",
       sources: result.sources,
     };
