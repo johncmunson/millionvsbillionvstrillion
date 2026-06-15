@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import localFont from "next/font/local";
 import styles from "./home.module.css";
 import ZoomableGrid from "./zoomable-grid";
@@ -9,12 +8,6 @@ const domaineSans = localFont({
   style: "italic",
   display: "swap",
 });
-
-export const metadata: Metadata = {
-  title: "Minimal Scale Grid | Million vs Billion vs Trillion",
-  description:
-    "A minimal one-cell-per-million grid comparing one million, one billion, and one trillion.",
-};
 
 export default function Home() {
   const millionTittle = `${styles.tittleI} ${styles.tittleMillion}`;
