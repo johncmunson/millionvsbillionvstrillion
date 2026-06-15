@@ -637,6 +637,7 @@
   }
 
   .keyTerm {
+    inline-size: calc(11ch + 1.3rem);
     padding: 0.55rem 0.7rem 0.55rem 0.6rem;
   }
 
