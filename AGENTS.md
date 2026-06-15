@@ -9,3 +9,4 @@ This version has breaking changes — APIs, conventions, and file structure may 
 User Notes:
 
 - You are not required to read the Next.js docs for extremely simple tasks or for tasks that aren't really related to Next.js
+- A dev server will always be running on port 3000, you don't have to start one up on your own
