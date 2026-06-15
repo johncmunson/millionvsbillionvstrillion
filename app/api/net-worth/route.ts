@@ -18,7 +18,7 @@ const lookupOutputSchema = z.object({
   name: z
     .string()
     .describe(
-      "The resolved public figure name, or the user's submitted name if no unambiguous person was resolved.",
+      "The resolved public figure name. This will often match the user's submitted name, but not always (e.g., User Submitted: 'The Rock' -> Resolved Name: 'Dwayne Johnson').",
     ),
   estimated_net_worth: z
     .number()
@@ -41,7 +41,7 @@ const lookupOutputSchema = z.object({
     .string()
     .nullable()
     .describe(
-      "For ambiguous names, an example of a clearer query using a qualifier. Use null otherwise.",
+      "For ambiguous names, an example of a clearer query using a qualifier, e.g. 'Robert Smith, the investor not the musician'. Use null otherwise.",
     ),
 });
 
