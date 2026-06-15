@@ -15,6 +15,7 @@
     "@ai-sdk/openai": "^3.0.71",
     "@libsql/client": "^0.17.3",
     "@next/env": "^16.2.9",
+    "@vercel/functions": "^3.7.1",
     "ai": "^6.0.205",
     "drizzle-orm": "^0.45.2",
     "next": "16.2.9",
