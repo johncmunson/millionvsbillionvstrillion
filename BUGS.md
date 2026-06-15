@@ -1,3 +1,1 @@
 - Need to implement caching and TTL
-- The drawn box looks too chunky when you zoom out
-- handle values larger the $1T

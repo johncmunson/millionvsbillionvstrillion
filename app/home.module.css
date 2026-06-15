@@ -149,9 +149,6 @@
 .redCellLabelText {
   inline-size: 94%;
   padding: min(4cqw, 7cqh) 4.5cqw;
-  border: 1px solid var(--line-bright);
-  border-radius: 7cqw;
-  background: rgb(248 250 252 / 0.38);
   font-size: clamp(1px, min(5.7cqw, 8.2cqh), 1.125rem);
   font-weight: 500;
   letter-spacing: -0.012em;
