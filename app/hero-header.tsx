@@ -92,7 +92,7 @@ function getResultCopy(result: NetWorthLookupResult) {
       message: `${result.name} has an approximate net worth of ${formatNetWorth(
         result.estimated_net_worth,
       )}.`,
-      sources: `Sources: ${
+      sources: `${result.sources.length === 1 ? "Source" : "Sources"}: ${
         result.sources.length > 0 ? result.sources.join(", ") : "Not provided"
       }`,
     };

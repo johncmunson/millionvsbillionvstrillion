@@ -4,3 +4,4 @@
 - The drawn box looks too chunky when you zoom out
 - Devtools error: zoomable-grid.tsx:361 Unable to preventDefault inside passive event listener invocation.
 - handle values larger the $1T
+- Statistically, this is you. -> Too thick
