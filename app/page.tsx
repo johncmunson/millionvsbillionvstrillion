@@ -1,7 +1,6 @@
 import localFont from "next/font/local";
 import styles from "./home.module.css";
-import HeroHeader from "./hero-header";
-import ZoomableGrid from "./zoomable-grid";
+import WealthExperience from "./wealth-experience";
 
 const domaineSans = localFont({
   src: "./fonts/domaine-sans-display-thin-italic.woff2",
@@ -15,8 +14,7 @@ export default function Home() {
 
   return (
     <main className={styles.page}>
-      <HeroHeader ampersandClass={ampersandClass} />
-      <ZoomableGrid />
+      <WealthExperience ampersandClass={ampersandClass} />
     </main>
   );
 }

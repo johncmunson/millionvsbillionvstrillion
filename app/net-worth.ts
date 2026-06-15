@@ -1,0 +1,12 @@
+export type NetWorthLookupStatus = "found" | "not_found" | "ambiguous";
+
+export type NetWorthLookupResult = {
+  status: NetWorthLookupStatus;
+  name: string;
+  estimated_net_worth: number | null;
+  sources: string[];
+  message?: string | null;
+  qualifier_example?: string | null;
+};
+
+export const MIN_VISUALIZED_NET_WORTH = 1_000_000;

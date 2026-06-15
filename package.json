@@ -12,6 +12,7 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.71",
     "@libsql/client": "^0.17.3",
     "@next/env": "^16.2.9",
     "ai": "^6.0.205",

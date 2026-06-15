@@ -250,7 +250,8 @@
 }
 
 .figurePanelKey,
-.figureForm {
+.figureForm,
+.figureInfo {
   grid-area: 1 / 1;
   transition: opacity 160ms ease;
 }
@@ -273,6 +274,10 @@
   padding: 0;
   border: 0;
   background: transparent;
+}
+
+.figureForm,
+.figureInfo {
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
@@ -284,7 +289,8 @@
   visibility: hidden;
 }
 
-.figurePanelOpen .figureForm {
+.figurePanelShowForm .figureForm,
+.figurePanelShowInfo .figureInfo {
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
@@ -315,6 +321,11 @@
 .figureInput:focus-visible {
   outline: 2px solid rgb(79 115 166 / 0.55);
   outline-offset: 2px;
+}
+
+.figureInput:disabled {
+  cursor: default;
+  opacity: 0.72;
 }
 
 .figureSubmit,
@@ -365,6 +376,83 @@
 .figureCancel:disabled {
   cursor: default;
   opacity: 0.7;
+}
+
+.figureSpinner {
+  inline-size: 1.05rem;
+  block-size: 1.05rem;
+  border: 2px solid rgb(111 167 123 / 0.24);
+  border-block-start-color: var(--scale-green);
+  border-radius: 50%;
+  animation: figureSpinnerSpin 820ms linear infinite;
+}
+
+.figureInfo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  align-self: stretch;
+  box-sizing: border-box;
+  min-width: 0;
+  min-block-size: 0;
+  overflow: hidden;
+  padding: 0.55rem 0.65rem;
+  border: 1.5px dashed var(--line-mid);
+  background: transparent;
+  color: var(--ink);
+}
+
+.figureInfoCopy {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.figureInfo p {
+  max-inline-size: none;
+  margin: 0;
+  color: inherit;
+  font-size: clamp(0.76rem, 0.88vw, 0.9rem);
+  line-height: 1.25;
+}
+
+.figureInfo p + p {
+  color: var(--muted);
+  font-size: clamp(0.7rem, 0.78vw, 0.8rem);
+}
+
+.figureReset {
+  justify-self: end;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--line-mid);
+  border-radius: 0.2rem;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+.figureReset:is(:hover, :focus-visible) {
+  background: rgb(15 23 42 / 0.04);
+  color: var(--ink);
+}
+
+.figureReset:focus-visible {
+  outline: 2px solid rgb(79 115 166 / 0.55);
+  outline-offset: 2px;
+}
+
+@keyframes figureSpinnerSpin {
+  to {
+    transform: rotate(1turn);
+  }
 }
 
 .figurePromptHidden {
@@ -572,10 +660,16 @@
 @media (prefers-reduced-motion: reduce) {
   .figurePanelKey,
   .figureForm,
+  .figureInfo,
   .figureSubmit,
   .figureCancel,
+  .figureReset,
   .keyButton,
   .zoomControls button {
     transition: none;
+  }
+
+  .figureSpinner {
+    animation: none;
   }
 }

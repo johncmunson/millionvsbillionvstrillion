@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent, WheelEvent } from "react";
+import { MIN_VISUALIZED_NET_WORTH } from "./net-worth";
 import styles from "./home.module.css";
 
 const GRID_SIZE = 1000;
@@ -27,6 +28,7 @@ const ZOOM_STEP = 1.8;
 const ZOOM_EPSILON = 0.001;
 const SCALE_KEY_ZOOM_TARGET_ATTRIBUTE = "data-grid-zoom-target";
 const SCALE_KEY_ZOOM_DURATION_MS = 1800;
+const NET_WORTH_ZOOM_DURATION_MS = 2800;
 
 const INITIAL_VIEW = {
   zoom: MIN_ZOOM,
@@ -35,6 +37,10 @@ const INITIAL_VIEW = {
 };
 
 type View = typeof INITIAL_VIEW;
+
+type ZoomableGridProps = {
+  highlightedNetWorth: number | null;
+};
 
 type VisibleArea = {
   left: number;
@@ -119,9 +125,12 @@ function getMillionGridPath({ left, top, right, bottom }: VisibleArea) {
   return segments.join("");
 }
 
-export default function ZoomableGrid() {
+export default function ZoomableGrid({
+  highlightedNetWorth,
+}: ZoomableGridProps) {
   const lastBrowserScaleRef = useRef<number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const lastHighlightedNetWorthRef = useRef<number | null>(null);
   const viewRef = useRef<View>(INITIAL_VIEW);
   const [view, setView] = useState<View>(INITIAL_VIEW);
 
@@ -145,6 +154,25 @@ export default function ZoomableGrid() {
   }, [view]);
 
   const showMillionGrid = view.zoom >= GRID_LINES_VISIBLE_ZOOM;
+
+  const highlightedBox = useMemo(() => {
+    if (
+      highlightedNetWorth === null ||
+      highlightedNetWorth < MIN_VISUALIZED_NET_WORTH
+    ) {
+      return null;
+    }
+
+    const rawSize = Math.sqrt(highlightedNetWorth / 1_000_000);
+    const size = clamp(rawSize, MILLION_CELL_SIZE, GRID_SIZE);
+
+    return {
+      x: GRID_CENTER - size / 2,
+      y: GRID_CENTER - size / 2,
+      size,
+      targetZoom: clamp(645 / rawSize, MIN_ZOOM, MAX_ZOOM),
+    };
+  }, [highlightedNetWorth]);
 
   const millionGridPath = useMemo(
     () => (showMillionGrid ? getMillionGridPath(visibleArea) : ""),
@@ -189,7 +217,7 @@ export default function ZoomableGrid() {
   );
 
   const animateZoomTo = useCallback(
-    (targetZoom: number) => {
+    (targetZoom: number, duration = SCALE_KEY_ZOOM_DURATION_MS) => {
       const currentView = viewRef.current;
       const targetView = getZoomedView(currentView, targetZoom);
       const target = targetView.zoom;
@@ -211,7 +239,7 @@ export default function ZoomableGrid() {
 
       const tick = (now: number) => {
         const progress = clamp(
-          (now - startTime) / SCALE_KEY_ZOOM_DURATION_MS,
+          (now - startTime) / duration,
           0,
           1,
         );
@@ -237,6 +265,20 @@ export default function ZoomableGrid() {
     },
     [cancelZoomAnimation, getZoomedView],
   );
+
+  useEffect(() => {
+    if (highlightedNetWorth === null || highlightedBox === null) {
+      lastHighlightedNetWorthRef.current = null;
+      return;
+    }
+
+    if (lastHighlightedNetWorthRef.current === highlightedNetWorth) {
+      return;
+    }
+
+    lastHighlightedNetWorthRef.current = highlightedNetWorth;
+    animateZoomTo(highlightedBox.targetZoom, NET_WORTH_ZOOM_DURATION_MS);
+  }, [animateZoomTo, highlightedBox, highlightedNetWorth]);
 
   useEffect(() => {
     const handleScaleKeyClick = (event: MouseEvent) => {
@@ -412,6 +454,21 @@ export default function ZoomableGrid() {
           stroke="rgba(15, 23, 42, 0.75)"
           vectorEffect="non-scaling-stroke"
         />
+        {highlightedBox ? (
+          <rect
+            x={highlightedBox.x}
+            y={highlightedBox.y}
+            width={highlightedBox.size}
+            height={highlightedBox.size}
+            fill="none"
+            stroke="var(--ink)"
+            strokeWidth={2.25}
+            strokeDasharray="8 5"
+            vectorEffect="non-scaling-stroke"
+            pointerEvents="none"
+            aria-hidden="true"
+          />
+        ) : null}
       </svg>
 
       {showRedCellText ? (
