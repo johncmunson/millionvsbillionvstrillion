@@ -12,6 +12,7 @@
   --scale-blue: #4f73a6;
   --scale-gold: #d6a84f;
   --scale-red: #f2d8d5;
+  --scale-red-dark: #a44942;
   --radius-pill: 999px;
   --edge: clamp(0.75rem, 2vmin, 1.5rem);
   --gap: clamp(0.75rem, 1.6vmin, 1.25rem);
@@ -243,6 +244,146 @@
   align-content: start;
 }
 
+.figurePanel {
+  display: grid;
+  min-width: 0;
+}
+
+.figurePanelKey,
+.figureForm {
+  grid-area: 1 / 1;
+  transition: opacity 160ms ease;
+}
+
+.figurePanelKey {
+  display: grid;
+  min-width: 0;
+  gap: 0.45rem;
+  align-content: start;
+}
+
+.figureForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  align-content: start;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.figurePanelOpen .figurePanelKey {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.figurePanelOpen .figureForm {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.figureInput,
+.figureSubmit,
+.figureCancel {
+  min-width: 0;
+  min-block-size: 2.45rem;
+  border-radius: 0.2rem;
+  font: inherit;
+  font-size: clamp(0.82rem, 0.95vw, 0.95rem);
+}
+
+.figureInput {
+  inline-size: 100%;
+  padding-inline: 0.8rem;
+  border: 1px solid var(--line-mid);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.figureInput::placeholder {
+  color: rgb(100 116 139 / 0.78);
+}
+
+.figureInput:focus-visible {
+  outline: 2px solid rgb(79 115 166 / 0.55);
+  outline-offset: 2px;
+}
+
+.figureSubmit,
+.figureCancel {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: 2.45rem;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+.figureSubmit svg,
+.figureCancel svg {
+  inline-size: 1.05rem;
+  block-size: 1.05rem;
+}
+
+.figureSubmit,
+.figureCancel {
+  border: 1px solid var(--line-mid);
+  background: var(--surface);
+}
+
+.figureSubmit {
+  color: var(--scale-green);
+}
+
+.figureCancel {
+  color: var(--scale-red-dark);
+}
+
+.figureSubmit:is(:hover, :focus-visible),
+.figureCancel:is(:hover, :focus-visible) {
+  background: rgb(15 23 42 / 0.04);
+}
+
+.figureSubmit:focus-visible,
+.figureCancel:focus-visible {
+  outline: 2px solid rgb(79 115 166 / 0.55);
+  outline-offset: 2px;
+}
+
+.figureSubmit:disabled,
+.figureCancel:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.figurePromptHidden {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.visuallyHidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .key {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -429,6 +570,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .figurePanelKey,
+  .figureForm,
+  .figureSubmit,
+  .figureCancel,
   .keyButton,
   .zoomControls button {
     transition: none;
