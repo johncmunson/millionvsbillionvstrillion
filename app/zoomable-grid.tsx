@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, KeyboardEvent, WheelEvent } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
 import { MIN_VISUALIZED_NET_WORTH } from "./net-worth";
 import styles from "./home.module.css";
 
@@ -133,6 +133,7 @@ export default function ZoomableGrid({
   const animationFrameRef = useRef<number | null>(null);
   const lastHighlightedNetWorthRef = useRef<number | null>(null);
   const viewRef = useRef<View>(INITIAL_VIEW);
+  const gridRef = useRef<SVGSVGElement | null>(null);
   const [view, setView] = useState<View>(INITIAL_VIEW);
 
   useEffect(() => {
@@ -362,10 +363,24 @@ export default function ZoomableGrid({
     };
   }, [getZoomedView]);
 
-  const handleWheel = (event: WheelEvent<SVGSVGElement>) => {
-    event.preventDefault();
-    zoomBy(event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP);
-  };
+  useEffect(() => {
+    const grid = gridRef.current;
+
+    if (grid === null) {
+      return;
+    }
+
+    const handleWheel = (event: globalThis.WheelEvent) => {
+      event.preventDefault();
+      zoomBy(event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP);
+    };
+
+    grid.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      grid.removeEventListener("wheel", handleWheel);
+    };
+  }, [zoomBy]);
 
   const handleKeyDown = (event: KeyboardEvent<SVGSVGElement>) => {
     switch (event.key) {
@@ -397,7 +412,7 @@ export default function ZoomableGrid({
         role="img"
         aria-labelledby="minimal-grid-title minimal-grid-desc"
         tabIndex={0}
-        onWheel={handleWheel}
+        ref={gridRef}
         onDoubleClick={() => zoomBy(ZOOM_STEP)}
         onKeyDown={handleKeyDown}
         shapeRendering="crispEdges"
