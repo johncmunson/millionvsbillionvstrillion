@@ -209,7 +209,7 @@
 
 .key {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
   margin: 0;
   background: rgba(15, 23, 42, 0.12);
@@ -218,6 +218,7 @@
 
 .key div {
   display: grid;
+  min-width: 0;
   gap: 0.25rem;
   align-content: start;
   padding: 0.6rem;
@@ -233,11 +234,12 @@
 }
 
 .key dd {
+  min-width: 0;
   margin: 0;
   color: var(--muted);
   font-size: clamp(0.72rem, 0.9vw, 0.85rem);
   line-height: 1.25;
-  white-space: nowrap;
+  text-wrap: pretty;
 }
 
 .green {
@@ -256,9 +258,30 @@
   .header {
     grid-template-columns: minmax(0, 1fr) minmax(42rem, 45rem);
   }
+}
+
+@media (min-width: 901px) {
+  .header {
+    column-gap: clamp(2rem, 4vw, 4rem);
+    row-gap: var(--gap);
+  }
+
+  .copy {
+    display: contents;
+  }
+
+  .header h1 {
+    grid-column: 1 / -1;
+  }
+
+  .header p {
+    grid-column: 1;
+    align-self: end;
+  }
 
   .key {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-column: 2;
+    align-self: end;
   }
 }
 
@@ -271,7 +294,27 @@
 
 @media (max-width: 640px) {
   .key {
-    grid-template-columns: 1fr;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 1px 0;
+  }
+
+  .key div {
+    display: contents;
+  }
+
+  .key dt,
+  .key dd {
+    display: flex;
+    align-items: center;
+    background: white;
+  }
+
+  .key dt {
+    padding: 0.55rem 0.7rem 0.55rem 0.6rem;
+  }
+
+  .key dd {
+    padding: 0.55rem 0.6rem 0.55rem 0.7rem;
   }
 }
 
@@ -283,5 +326,16 @@
 
   .key div {
     padding: 0.45rem 0.55rem;
+  }
+}
+
+@media (min-width: 1476px) {
+  .header p,
+  .key {
+    align-self: start;
+  }
+
+  .header p {
+    margin-top: 0;
   }
 }

@@ -46,10 +46,10 @@ export default function Home() {
             <span className={trillionTittle}>i</span>
             {"ons"}
           </h1>
-          <p className="ml-1.5!">
-            A million is life-changing. A billion is power. A trillion is what
-            happens when power compounds for long enough. The scale is hard to
-            see until you put it on a grid.
+          <p className="ml-1.5! text-pretty">
+            A million dollars is life-changing. A billion is power. A trillion
+            is what happens when power compounds for long enough. The scale is
+            hard to see until you put it on a grid.
           </p>
         </div>
 
