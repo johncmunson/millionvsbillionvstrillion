@@ -16,6 +16,7 @@
   --edge: clamp(0.75rem, 2vmin, 1.5rem);
   --gap: clamp(0.75rem, 1.6vmin, 1.25rem);
   --copy-gap: clamp(0.35rem, 1vmin, 0.6rem);
+  --key-button-padding: 0.6rem;
 
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
@@ -50,8 +51,6 @@
 .header h1,
 .header p,
 .key,
-.key dt,
-.key dd,
 .figurePrompt,
 .redCellLabelText {
   margin: 0;
@@ -251,6 +250,7 @@
   padding: 0;
   border: 1px solid var(--line);
   background: var(--line);
+  list-style: none;
 }
 
 .figurePrompt {
@@ -284,23 +284,44 @@
   outline-offset: 3px;
 }
 
-.key div {
+.keyItem {
   display: grid;
   min-width: 0;
-  gap: 0.25rem;
-  align-content: start;
-  padding: 0.6rem;
-  background: var(--surface);
 }
 
-.key dt {
+.keyButton {
+  display: grid;
+  min-width: 0;
+  block-size: 100%;
+  gap: 0.25rem;
+  align-content: start;
+  padding: var(--key-button-padding);
+  border: 0;
+  background: var(--surface);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: start;
+  transition: background-color 160ms ease;
+}
+
+.keyButton:is(:hover, :focus-visible) {
+  background: rgb(248 250 252 / 0.92);
+}
+
+.keyButton:focus-visible {
+  outline: 2px solid rgb(79 115 166 / 0.55);
+  outline-offset: -2px;
+}
+
+.keyTerm {
   font-family: var(--font-geist-mono);
   font-size: clamp(0.8rem, 1vw, 0.95rem);
   font-weight: 700;
   white-space: nowrap;
 }
 
-.key dd {
+.keyDescription {
   min-width: 0;
   color: var(--muted);
   font-size: clamp(0.72rem, 0.9vw, 0.85rem);
@@ -370,26 +391,27 @@
 
 @media (max-width: 640px) {
   .key {
+    grid-template-columns: 1fr;
+  }
+
+  .keyButton {
     grid-template-columns: max-content minmax(0, 1fr);
-    gap: 1px 0;
+    gap: 0;
+    align-content: stretch;
+    padding: 0;
   }
 
-  .key div {
-    display: contents;
-  }
-
-  .key dt,
-  .key dd {
+  .keyTerm,
+  .keyDescription {
     display: flex;
     align-items: center;
-    background: var(--surface);
   }
 
-  .key dt {
+  .keyTerm {
     padding: 0.55rem 0.7rem 0.55rem 0.6rem;
   }
 
-  .key dd {
+  .keyDescription {
     padding: 0.55rem 0.6rem 0.55rem 0.7rem;
   }
 }
@@ -398,18 +420,16 @@
   .page {
     --gap: clamp(0.5rem, 1.2vmin, 0.8rem);
     --copy-gap: 0.35rem;
+    --key-button-padding: 0.45rem 0.55rem;
   }
 
   .header p {
     line-height: 1.3;
   }
-
-  .key div {
-    padding: 0.45rem 0.55rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .keyButton,
   .zoomControls button {
     transition: none;
   }

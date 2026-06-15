@@ -25,6 +25,8 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 1200;
 const ZOOM_STEP = 1.8;
 const ZOOM_EPSILON = 0.001;
+const SCALE_KEY_ZOOM_TARGET_ATTRIBUTE = "data-grid-zoom-target";
+const SCALE_KEY_ZOOM_DURATION_MS = 1800;
 
 const INITIAL_VIEW = {
   zoom: MIN_ZOOM,
@@ -59,6 +61,20 @@ function getBrowserScale() {
   }
 
   return (window.devicePixelRatio || 1) * (window.visualViewport?.scale || 1);
+}
+
+function getPrefersReducedMotion() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function easeInOutCubic(progress: number) {
+  return progress < 0.5
+    ? 4 * progress * progress * progress
+    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 }
 
 function formatZoom(zoom: number) {
@@ -105,7 +121,13 @@ function getMillionGridPath({ left, top, right, bottom }: VisibleArea) {
 
 export default function ZoomableGrid() {
   const lastBrowserScaleRef = useRef<number | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const viewRef = useRef<View>(INITIAL_VIEW);
   const [view, setView] = useState<View>(INITIAL_VIEW);
+
+  useEffect(() => {
+    viewRef.current = view;
+  }, [view]);
 
   const visibleArea = useMemo(() => {
     const span = GRID_SIZE / view.zoom;
@@ -144,12 +166,113 @@ export default function ZoomableGrid() {
     return normalizeView({ ...current, zoom: nextZoom });
   }, []);
 
+  const cancelZoomAnimation = useCallback(() => {
+    if (animationFrameRef.current === null) {
+      return;
+    }
+
+    cancelAnimationFrame(animationFrameRef.current);
+    animationFrameRef.current = null;
+  }, []);
+
   const zoomBy = useCallback(
     (factor: number) => {
-      setView((current) => getZoomedView(current, current.zoom * factor));
+      cancelZoomAnimation();
+
+      setView((current) => {
+        const nextView = getZoomedView(current, current.zoom * factor);
+        viewRef.current = nextView;
+        return nextView;
+      });
     },
-    [getZoomedView],
+    [cancelZoomAnimation, getZoomedView],
   );
+
+  const animateZoomTo = useCallback(
+    (targetZoom: number) => {
+      const currentView = viewRef.current;
+      const targetView = getZoomedView(currentView, targetZoom);
+      const target = targetView.zoom;
+
+      cancelZoomAnimation();
+
+      if (
+        getPrefersReducedMotion() ||
+        Math.abs(currentView.zoom - target) < ZOOM_EPSILON
+      ) {
+        viewRef.current = targetView;
+        setView(targetView);
+        return;
+      }
+
+      const startTime = performance.now();
+      const startZoom = currentView.zoom;
+      const zoomRatio = target / startZoom;
+
+      const tick = (now: number) => {
+        const progress = clamp(
+          (now - startTime) / SCALE_KEY_ZOOM_DURATION_MS,
+          0,
+          1,
+        );
+        const easedProgress = easeInOutCubic(progress);
+        const nextZoom =
+          progress >= 1
+            ? target
+            : startZoom * Math.pow(zoomRatio, easedProgress);
+        const nextView = getZoomedView(currentView, nextZoom);
+
+        viewRef.current = nextView;
+        setView(nextView);
+
+        if (progress < 1) {
+          animationFrameRef.current = requestAnimationFrame(tick);
+          return;
+        }
+
+        animationFrameRef.current = null;
+      };
+
+      animationFrameRef.current = requestAnimationFrame(tick);
+    },
+    [cancelZoomAnimation, getZoomedView],
+  );
+
+  useEffect(() => {
+    const handleScaleKeyClick = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) {
+        return;
+      }
+
+      const trigger = event.target.closest(
+        `[${SCALE_KEY_ZOOM_TARGET_ATTRIBUTE}]`,
+      );
+
+      if (!(trigger instanceof HTMLElement)) {
+        return;
+      }
+
+      const targetZoom = Number(trigger.dataset.gridZoomTarget);
+
+      if (!Number.isFinite(targetZoom)) {
+        return;
+      }
+
+      animateZoomTo(targetZoom);
+    };
+
+    document.addEventListener("click", handleScaleKeyClick);
+
+    return () => {
+      document.removeEventListener("click", handleScaleKeyClick);
+    };
+  }, [animateZoomTo]);
+
+  useEffect(() => {
+    return () => {
+      cancelZoomAnimation();
+    };
+  }, [cancelZoomAnimation]);
 
   useEffect(() => {
     lastBrowserScaleRef.current = getBrowserScale();
@@ -175,6 +298,7 @@ export default function ZoomableGrid() {
         }
 
         lastBrowserScaleRef.current = previousScale * appliedFactor;
+        viewRef.current = nextView;
         return nextView;
       });
     };

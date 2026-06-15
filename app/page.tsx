@@ -55,20 +55,51 @@ export default function Home() {
         </div>
 
         <div className={styles.keyGroup}>
-          <dl className={styles.key} aria-label="Scale key">
-            <div>
-              <dt className={styles.green}>$1 Million</dt>
-              <dd>A lot of money</dd>
-            </div>
-            <div>
-              <dt className={styles.blue}>$1 Billion</dt>
-              <dd>A shit ton of money</dd>
-            </div>
-            <div>
-              <dt className={styles.gold}>$1 Trillion</dt>
-              <dd>An unfathomable amount of money</dd>
-            </div>
-          </dl>
+          <ul className={styles.key} aria-label="Scale key">
+            <li className={styles.keyItem}>
+              <button
+                className={styles.keyButton}
+                type="button"
+                data-grid-zoom-target="645"
+                aria-label="Zoom grid to the $1 Million scale at 645×"
+              >
+                <span className={`${styles.keyTerm} ${styles.green}`}>
+                  $1 Million
+                </span>
+                <span className={styles.keyDescription}>A lot of money</span>
+              </button>
+            </li>
+            <li className={styles.keyItem}>
+              <button
+                className={styles.keyButton}
+                type="button"
+                data-grid-zoom-target="20"
+                aria-label="Zoom grid to the $1 Billion scale at 20×"
+              >
+                <span className={`${styles.keyTerm} ${styles.blue}`}>
+                  $1 Billion
+                </span>
+                <span className={styles.keyDescription}>
+                  A shit ton of money
+                </span>
+              </button>
+            </li>
+            <li className={styles.keyItem}>
+              <button
+                className={styles.keyButton}
+                type="button"
+                data-grid-zoom-target="1"
+                aria-label="Zoom grid to the $1 Trillion scale at 1×"
+              >
+                <span className={`${styles.keyTerm} ${styles.gold}`}>
+                  $1 Trillion
+                </span>
+                <span className={styles.keyDescription}>
+                  An unfathomable amount of money
+                </span>
+              </button>
+            </li>
+          </ul>
           <button className={figurePromptKeyClass} type="button">
             {figurePromptText}
           </button>
