@@ -276,12 +276,13 @@
 
   .header p {
     grid-column: 1;
-    align-self: end;
+    align-self: start;
+    margin-top: 0;
   }
 
   .key {
     grid-column: 2;
-    align-self: end;
+    align-self: start;
   }
 }
 
