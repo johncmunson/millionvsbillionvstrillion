@@ -5,3 +5,4 @@
 - Devtools error: zoomable-grid.tsx:361 Unable to preventDefault inside passive event listener invocation.
 - "Reset" should also set the zoom-level back to 1x
 - "Unfathomable amount of money" doesn't line up with the others on mobile
+- Zoom widget should increment by 10x
