@@ -14,6 +14,9 @@ export default function Home() {
   const billionTittle = `${styles.tittleI} ${styles.tittleBillion}`;
   const trillionTittle = `${styles.tittleI} ${styles.tittleTrillion}`;
   const ampersandClass = `${domaineSans.className} ${styles.ampersand}`;
+  const figurePromptText = "Visualize the net worth of a public figure";
+  const figurePromptKeyClass = `${styles.figurePrompt} ${styles.figurePromptKey}`;
+  const figurePromptSubheadingClass = `${styles.figurePrompt} ${styles.figurePromptSubheading}`;
 
   return (
     <main className={styles.page}>
@@ -39,27 +42,37 @@ export default function Home() {
             <span className={trillionTittle}>i</span>
             {"ons"}
           </h1>
-          <p className="ml-1.5! text-pretty">
-            A million dollars is life-changing. A billion is power. A trillion
-            is what happens when power compounds for long enough. The scale is
-            hard to see until you put it on a grid.
-          </p>
+          <div className={styles.subheadingGroup}>
+            <p>
+              A million dollars is life-changing. A billion is power. A trillion
+              is what happens when power compounds for long enough. The scale is
+              hard to see until you put it on a grid.
+            </p>
+            <button className={figurePromptSubheadingClass} type="button">
+              {figurePromptText}
+            </button>
+          </div>
         </div>
 
-        <dl className={styles.key} aria-label="Scale key">
-          <div>
-            <dt className={styles.green}>$1 Million</dt>
-            <dd>A lot of money</dd>
-          </div>
-          <div>
-            <dt className={styles.blue}>$1 Billion</dt>
-            <dd>A shit ton of money</dd>
-          </div>
-          <div>
-            <dt className={styles.gold}>$1 Trillion</dt>
-            <dd>An unfathomable amount of money</dd>
-          </div>
-        </dl>
+        <div className={styles.keyGroup}>
+          <dl className={styles.key} aria-label="Scale key">
+            <div>
+              <dt className={styles.green}>$1 Million</dt>
+              <dd>A lot of money</dd>
+            </div>
+            <div>
+              <dt className={styles.blue}>$1 Billion</dt>
+              <dd>A shit ton of money</dd>
+            </div>
+            <div>
+              <dt className={styles.gold}>$1 Trillion</dt>
+              <dd>An unfathomable amount of money</dd>
+            </div>
+          </dl>
+          <button className={figurePromptKeyClass} type="button">
+            {figurePromptText}
+          </button>
+        </div>
       </header>
 
       <ZoomableGrid />

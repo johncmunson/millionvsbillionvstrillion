@@ -1,19 +1,28 @@
 .page {
-  --ink: #0f172aec;
+  --ink: rgb(15 23 42 / 0.93);
   --muted: #64748b;
   --paper: #faf8f1;
+  --surface: #fff;
+  --line: rgb(15 23 42 / 0.12);
+  --line-mid: rgb(15 23 42 / 0.16);
+  --line-bright: rgb(255 255 255 / 0.22);
+  --focus-ring: #4f73a6;
+  --shadow-floating: 0 10px 30px rgb(15 23 42 / 0.12);
   --scale-green: #6fa77b;
   --scale-blue: #4f73a6;
   --scale-gold: #d6a84f;
   --scale-red: #f2d8d5;
+  --radius-pill: 999px;
   --edge: clamp(0.75rem, 2vmin, 1.5rem);
   --gap: clamp(0.75rem, 1.6vmin, 1.25rem);
-  height: 100vh;
-  height: 100dvh;
-  padding: var(--edge);
+  --copy-gap: clamp(0.35rem, 1vmin, 0.6rem);
+
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: var(--gap);
+  block-size: 100vh;
+  block-size: 100dvh;
+  padding: var(--edge);
   overflow: hidden;
   background: var(--paper);
   color: var(--ink);
@@ -23,15 +32,32 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(30rem, 32rem);
   gap: var(--gap);
-  align-items: end;
+  align-items: start;
 }
 
 .copy {
+  display: grid;
   min-width: 0;
+  gap: var(--copy-gap);
+}
+
+.subheadingGroup {
+  display: grid;
+  min-width: 0;
+  gap: 0.45rem;
+}
+
+.header h1,
+.header p,
+.key,
+.key dt,
+.key dd,
+.figurePrompt,
+.redCellLabelText {
+  margin: 0;
 }
 
 .header h1 {
-  margin: 0;
   font-size: clamp(1.75rem, min(6vw, 9dvh), 4.5rem);
   line-height: 0.95;
   letter-spacing: -0.06em;
@@ -46,6 +72,7 @@
   --tittle-color: var(--ink);
   --tittle-split: 35%;
   --tittle-stem-color: var(--ink);
+
   background-image: linear-gradient(
     to bottom,
     var(--tittle-color) 0%,
@@ -72,37 +99,30 @@
 }
 
 .header p {
-  max-width: 42rem;
-  margin: 0.6rem 0 0;
+  max-inline-size: 42rem;
+  margin-inline-start: 0.375rem;
   color: var(--muted);
   font-size: clamp(0.9rem, min(1.4vw, 2dvh), 1.05rem);
   line-height: 1.45;
-}
-
-.header .rule {
-  color: var(--ink);
-  font-family: var(--font-geist-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  text-transform: uppercase;
+  text-wrap: pretty;
 }
 
 .stage {
   position: relative;
-  width: 100%;
-  height: 100%;
+  isolation: isolate;
+  inline-size: 100%;
+  block-size: 100%;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid rgba(15, 23, 42, 0.16);
-  background: white;
+  border: 1px solid var(--line-mid);
+  background: var(--surface);
 }
 
 .grid {
   display: block;
-  width: 100%;
-  height: 100%;
+  inline-size: 100%;
+  block-size: 100%;
   cursor: zoom-in;
   outline: none;
   touch-action: none;
@@ -110,7 +130,7 @@
 }
 
 .grid:focus-visible {
-  outline: 3px solid var(--scale-blue);
+  outline: 3px solid var(--focus-ring);
   outline-offset: -3px;
 }
 
@@ -127,12 +147,11 @@
 }
 
 .redCellLabelText {
-  width: 94%;
-  margin: 0;
+  inline-size: 94%;
   padding: min(4cqw, 7cqh) 4.5cqw;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid var(--line-bright);
   border-radius: 7cqw;
-  background: rgba(248, 250, 252, 0.38);
+  background: rgb(248 250 252 / 0.38);
   font-size: clamp(1px, min(5.7cqw, 8.2cqh), 1.125rem);
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -147,7 +166,7 @@
 }
 
 .redCellLabelText > span + span {
-  margin-top: 0.2em;
+  margin-block-start: 0.2em;
 }
 
 .redCellNoWrap {
@@ -155,43 +174,55 @@
 }
 
 .redCellLabelText .redCellSource {
-  margin-top: 0.38em;
+  margin-block-start: 0.38em;
   font-size: 0.84em;
   font-style: italic;
 }
 
 .zoomControls {
+  --control-size: 2rem;
+
   position: absolute;
-  top: clamp(0.5rem, 1.5vmin, 0.875rem);
-  right: clamp(0.5rem, 1.5vmin, 0.875rem);
+  z-index: 2;
+  inset-block-start: clamp(0.5rem, 1.5vmin, 0.875rem);
+  inset-inline-end: clamp(0.5rem, 1.5vmin, 0.875rem);
   display: flex;
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem;
-  border: 1px solid rgba(15, 23, 42, 0.14);
-  border-radius: 999px;
-  background: rgba(248, 250, 252, 0.88);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgb(15 23 42 / 0.14);
+  border-radius: var(--radius-pill);
+  background: rgb(248 250 252 / 0.88);
+  box-shadow: var(--shadow-floating);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .zoomControls button {
-  min-width: 2rem;
-  height: 2rem;
-  padding: 0 0.7rem;
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: var(--control-size);
+  block-size: var(--control-size);
+  padding-inline: 0.7rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 700;
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease;
 }
 
-.zoomControls button:hover:not(:disabled),
+.zoomControls button:is(:hover, :focus-visible):not(:disabled) {
+  background: rgb(15 23 42 / 0.08);
+}
+
 .zoomControls button:focus-visible {
-  background: rgba(15, 23, 42, 0.08);
-  outline: none;
+  outline: 2px solid rgb(79 115 166 / 0.55);
+  outline-offset: 2px;
 }
 
 .zoomControls button:disabled {
@@ -200,20 +231,57 @@
 }
 
 .zoomReadout {
-  min-width: 3.25rem;
+  min-inline-size: 3.25rem;
   color: var(--muted);
   font-family: var(--font-geist-mono);
   font-size: 0.75rem;
   text-align: center;
 }
 
+.keyGroup {
+  display: grid;
+  gap: 0.45rem;
+  align-content: start;
+}
+
 .key {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
-  margin: 0;
-  background: rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(15, 23, 42, 0.12);
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.figurePrompt {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(0.72rem, 0.9vw, 0.85rem);
+  font-style: italic;
+  line-height: 1.2;
+  text-align: start;
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.16em;
+}
+
+.figurePromptSubheading {
+  display: none;
+}
+
+.figurePrompt:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+.figurePrompt:focus-visible {
+  border-radius: 0.2rem;
+  outline: 2px solid rgb(79 115 166 / 0.55);
+  outline-offset: 3px;
 }
 
 .key div {
@@ -222,11 +290,10 @@
   gap: 0.25rem;
   align-content: start;
   padding: 0.6rem;
-  background: white;
+  background: var(--surface);
 }
 
 .key dt {
-  margin: 0;
   font-family: var(--font-geist-mono);
   font-size: clamp(0.8rem, 1vw, 0.95rem);
   font-weight: 700;
@@ -235,7 +302,6 @@
 
 .key dd {
   min-width: 0;
-  margin: 0;
   color: var(--muted);
   font-size: clamp(0.72rem, 0.9vw, 0.85rem);
   line-height: 1.25;
@@ -254,12 +320,6 @@
   color: var(--scale-gold);
 }
 
-@media (min-width: 1200px) {
-  .header {
-    grid-template-columns: minmax(0, 1fr) minmax(42rem, 45rem);
-  }
-}
-
 @media (min-width: 901px) {
   .header {
     column-gap: clamp(2rem, 4vw, 4rem);
@@ -274,22 +334,37 @@
     grid-column: 1 / -1;
   }
 
-  .header p {
+  .subheadingGroup {
     grid-column: 1;
     align-self: start;
-    margin-top: 0;
   }
 
-  .key {
+  .keyGroup {
     grid-column: 2;
     align-self: start;
+  }
+}
+
+@media (min-width: 1135px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr) minmax(42rem, 45rem);
+  }
+}
+
+@media (min-width: 1476px) {
+  .figurePromptSubheading {
+    display: inline-block;
+    margin-inline-start: 0.375rem;
+  }
+
+  .figurePromptKey {
+    display: none;
   }
 }
 
 @media (max-width: 900px) {
   .header {
     grid-template-columns: 1fr;
-    align-items: start;
   }
 }
 
@@ -307,7 +382,7 @@
   .key dd {
     display: flex;
     align-items: center;
-    background: white;
+    background: var(--surface);
   }
 
   .key dt {
@@ -320,8 +395,12 @@
 }
 
 @media (max-height: 560px) {
+  .page {
+    --gap: clamp(0.5rem, 1.2vmin, 0.8rem);
+    --copy-gap: 0.35rem;
+  }
+
   .header p {
-    margin-top: 0.35rem;
     line-height: 1.3;
   }
 
@@ -330,13 +409,8 @@
   }
 }
 
-@media (min-width: 1476px) {
-  .header p,
-  .key {
-    align-self: start;
-  }
-
-  .header p {
-    margin-top: 0;
+@media (prefers-reduced-motion: reduce) {
+  .zoomControls button {
+    transition: none;
   }
 }

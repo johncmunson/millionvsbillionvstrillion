@@ -191,11 +191,6 @@ export default function ZoomableGrid() {
     };
   }, [getZoomedView]);
 
-  const reset = useCallback(() => {
-    setView(INITIAL_VIEW);
-    lastBrowserScaleRef.current = getBrowserScale();
-  }, []);
-
   const handleWheel = (event: WheelEvent<SVGSVGElement>) => {
     event.preventDefault();
     zoomBy(event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP);
@@ -212,11 +207,6 @@ export default function ZoomableGrid() {
       case "_":
         event.preventDefault();
         zoomBy(1 / ZOOM_STEP);
-        break;
-      case "0":
-      case "Escape":
-        event.preventDefault();
-        reset();
         break;
     }
   };
@@ -337,14 +327,6 @@ export default function ZoomableGrid() {
           aria-label="Zoom in"
         >
           +
-        </button>
-        <button
-          type="button"
-          onClick={reset}
-          disabled={atMinZoom}
-          aria-label="Reset zoom"
-        >
-          Reset
         </button>
       </div>
     </section>
