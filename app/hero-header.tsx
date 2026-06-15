@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Fragment,
   useEffect,
   useMemo,
   useRef,
@@ -92,9 +93,8 @@ function getResultCopy(result: NetWorthLookupResult) {
       message: `${result.name} has an approximate net worth of ${formatNetWorth(
         result.estimated_net_worth,
       )}.`,
-      sources: `${result.sources.length === 1 ? "Source" : "Sources"}: ${
-        result.sources.length > 0 ? result.sources.join(", ") : "Not provided"
-      }`,
+      sourceLabel: result.sources.length === 1 ? "Source" : "Sources",
+      sources: result.sources,
     };
   }
 
@@ -427,7 +427,25 @@ export default function HeroHeader({
               <>
                 <div className={styles.figureInfoCopy}>
                   <p>{resultCopy.message}</p>
-                  {resultCopy.sources ? <p>{resultCopy.sources}</p> : null}
+                  {resultCopy.sources ? (
+                    <p className={styles.figureSources}>
+                      {resultCopy.sourceLabel}:{" "}
+                      {resultCopy.sources.length > 0
+                        ? resultCopy.sources.map((source, index) => (
+                            <Fragment key={`${source.url}-${source.name}`}>
+                              {index > 0 ? ", " : null}
+                              <a
+                                href={source.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {source.name}
+                              </a>
+                            </Fragment>
+                          ))
+                        : "Not provided"}
+                    </p>
+                  ) : null}
                 </div>
                 <button
                   className={styles.figureReset}

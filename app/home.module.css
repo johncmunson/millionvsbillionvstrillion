@@ -422,6 +422,23 @@
   font-size: clamp(0.7rem, 0.78vw, 0.8rem);
 }
 
+.figureSources a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.16em;
+}
+
+.figureSources a:is(:hover, :focus-visible) {
+  color: var(--ink);
+}
+
+.figureSources a:focus-visible {
+  border-radius: 0.12rem;
+  outline: 2px solid rgb(79 115 166 / 0.55);
+  outline-offset: 2px;
+}
+
 .figureReset {
   justify-self: end;
   padding: 0.25rem 0.5rem;

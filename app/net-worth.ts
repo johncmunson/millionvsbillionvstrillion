@@ -1,10 +1,15 @@
 export type NetWorthLookupStatus = "found" | "not_found" | "ambiguous";
 
+export type NetWorthSource = {
+  name: string;
+  url: string;
+};
+
 export type NetWorthLookupResult = {
   status: NetWorthLookupStatus;
   name: string;
   estimated_net_worth: number | null;
-  sources: string[];
+  sources: NetWorthSource[];
   message?: string | null;
   qualifier_example?: string | null;
 };

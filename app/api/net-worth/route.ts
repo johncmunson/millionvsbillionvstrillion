@@ -1,7 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { generateText, Output, stepCountIs } from "ai";
 import { z } from "zod";
-import type { NetWorthLookupResult } from "../../net-worth";
+import type { NetWorthLookupResult, NetWorthSource } from "../../net-worth";
 
 export const maxDuration = 30;
 
@@ -27,9 +27,20 @@ const lookupOutputSchema = z.object({
       "Estimated net worth in current US dollars. Use a numeric USD value only for status found; otherwise null.",
     ),
   sources: z
-    .array(z.string())
+    .array(
+      z.object({
+        name: z
+          .string()
+          .describe(
+            "Short, human-readable source name, e.g. Forbes, Bloomberg, Wikipedia.",
+          ),
+        url: z
+          .string()
+          .describe("Absolute URL for the source page used for the estimate."),
+      }),
+    )
     .describe(
-      "Short, human-readable source names used for the estimate, e.g. Forbes, Bloomberg, Wikipedia.",
+      "Sources used for the estimate, including names and URLs. The most credible sources should be listed first, stale or less credible sources at the end. Max 3 sources.",
     ),
   message: z
     .string()
@@ -47,6 +58,41 @@ const lookupOutputSchema = z.object({
 
 function jsonError(message: string, status: number) {
   return Response.json({ error: message }, { status });
+}
+
+function normalizeSourceUrl(url: string) {
+  const trimmedUrl = url.trim();
+
+  try {
+    const parsedUrl = new URL(trimmedUrl);
+
+    if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") {
+      return null;
+    }
+
+    return parsedUrl.href;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeSources(
+  sources: z.infer<typeof lookupOutputSchema>["sources"],
+) {
+  const sourceMap = new Map<string, NetWorthSource>();
+
+  for (const source of sources) {
+    const name = source.name.trim();
+    const url = normalizeSourceUrl(source.url);
+
+    if (!name || !url || sourceMap.has(url)) {
+      continue;
+    }
+
+    sourceMap.set(url, { name, url });
+  }
+
+  return Array.from(sourceMap.values()).slice(0, 4);
 }
 
 function normalizeOutput(
@@ -71,13 +117,7 @@ function normalizeOutput(
     status,
     name: output.name.trim() || submittedName,
     estimated_net_worth: status === "found" ? estimatedNetWorth : null,
-    sources: Array.from(
-      new Set(
-        output.sources
-          .map((source) => source.trim())
-          .filter((source) => source.length > 0),
-      ),
-    ).slice(0, 4),
+    sources: status === "found" ? normalizeSources(output.sources) : [],
     message: output.message?.trim() || null,
     qualifier_example: output.qualifier_example?.trim() || null,
   };
@@ -111,8 +151,15 @@ export async function POST(request: Request) {
       }),
       stopWhen: stepCountIs(5),
       system:
-        "You research public-figure net worth estimates. Use web_search for current, publicly available sources. Prefer reputable sources such as Forbes, Bloomberg, official rich lists, Wikipedia pages that cite financial sources, and major business publications. Return only the structured output requested by the schema. Do not invent figures or sources.",
-      prompt: `Find the current publicly available estimated net worth for this person: ${name}\n\nRules:\n- If the name clearly identifies one public figure and credible current net worth data is available, return status "found", the resolved name, estimated_net_worth as a numeric USD value, and source names.\n- If no credible public net worth estimate is available, return status "not_found" with estimated_net_worth null and no sources.\n- If the name is too generic or ambiguous, return status "ambiguous", estimated_net_worth null, and provide a qualifier_example such as "${name}, the actor".\n- Use USD. Convert shorthand like "$250B" to 250000000000.`,
+        "You research public-figure net worth estimates. Use web_search for current, publicly available sources. Prefer reputable sources such as Forbes, Bloomberg, official rich lists, Wikipedia pages that cite financial sources, and major business publications. Return only the structured output requested by the schema. Do not invent figures, sources, or URLs.",
+      prompt: `Find the current publicly available estimated net worth for this person: ${name}
+
+Rules:
+- If the name clearly identifies one public figure and credible current net worth data is available, return status "found", the resolved name, estimated_net_worth as a numeric USD value, and sources as objects with source names and absolute URLs.
+- If no credible public net worth estimate is available, return status "not_found" with estimated_net_worth null and no sources.
+- If the name is too generic or ambiguous, return status "ambiguous", estimated_net_worth null, and provide a qualifier_example such as "Jeff Bridges, the actor".
+- Use USD. Convert shorthand like "$250B" to 250000000000.
+- If there are multiple conflicting estimates, use your best judgement to determine the most credible figure and source, placing more weight on recent estimates from reputable sources.`,
     });
 
     return Response.json(normalizeOutput(output, name));
