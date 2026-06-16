@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { MIN_VISUALIZED_NET_WORTH } from "./net-worth";
@@ -509,26 +510,46 @@ export default function ZoomableGrid({
         </div>
       ) : null}
 
-      <div className={styles.zoomControls} aria-label="Grid zoom controls">
-        <button
-          type="button"
-          onClick={() => zoomBy(1 / ZOOM_STEP)}
-          disabled={atMinZoom}
-          aria-label="Zoom out"
+      <div className={styles.stageControls}>
+        <a
+          className={styles.githubButton}
+          href="https://github.com/johncmunson/millionvsbillionvstrillion"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View project on GitHub"
         >
-          −
-        </button>
-        <output className={styles.zoomReadout} aria-live="polite">
-          {formatZoom(view.zoom)}×
-        </output>
-        <button
-          type="button"
-          onClick={() => zoomBy(ZOOM_STEP)}
-          disabled={atMaxZoom}
-          aria-label="Zoom in"
-        >
-          +
-        </button>
+          <Image
+            className={styles.githubIcon}
+            src="/github.svg"
+            alt=""
+            width={20}
+            height={20}
+            unoptimized
+            aria-hidden="true"
+          />
+        </a>
+
+        <div className={styles.zoomControls} aria-label="Grid zoom controls">
+          <button
+            type="button"
+            onClick={() => zoomBy(1 / ZOOM_STEP)}
+            disabled={atMinZoom}
+            aria-label="Zoom out"
+          >
+            −
+          </button>
+          <output className={styles.zoomReadout} aria-live="polite">
+            {formatZoom(view.zoom)}×
+          </output>
+          <button
+            type="button"
+            onClick={() => zoomBy(ZOOM_STEP)}
+            disabled={atMaxZoom}
+            aria-label="Zoom in"
+          >
+            +
+          </button>
+        </div>
       </div>
     </section>
   );

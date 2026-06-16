@@ -19,18 +19,18 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Millions & Billions & Trillions",
   description:
-    "Interactive visualizations that compare the scale of one million, one billion, and one trillion dollars.",
+    "Interactive visualization that compares the differences in scale between one million, one billion, and one trillion dollars.",
   openGraph: {
     title: "Millions & Billions & Trillions",
     description:
-      "Interactive visualizations that compare the scale of one million, one billion, and one trillion dollars.",
+      "Interactive visualization that compares the differences in scale between one million, one billion, and one trillion dollars.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Millions & Billions & Trillions",
     description:
-      "Interactive visualizations that compare the scale of one million, one billion, and one trillion dollars.",
+      "Interactive visualization that compares the differences in scale between one million, one billion, and one trillion dollars.",
   },
 };
 

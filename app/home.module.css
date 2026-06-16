@@ -178,7 +178,8 @@
   font-weight: 400;
 }
 
-.zoomControls {
+.stageControls {
+  --control-padding: 0.25rem;
   --control-size: 2rem;
 
   position: absolute;
@@ -187,8 +188,43 @@
   inset-inline-end: clamp(0.5rem, 1.5vmin, 0.875rem);
   display: flex;
   align-items: center;
+  gap: 0.35rem;
+}
+
+.githubButton {
+  display: inline-grid;
+  place-items: center;
+  inline-size: calc(var(--control-size) + (var(--control-padding) * 2));
+  block-size: calc(var(--control-size) + (var(--control-padding) * 2));
+  border: 1px solid rgb(15 23 42 / 0.14);
+  border-radius: var(--radius-pill);
+  background: rgb(248 250 252 / 0.88);
+  box-shadow: var(--shadow-floating);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease;
+}
+
+.githubButton:is(:hover, :focus-visible) {
+  background: rgb(248 250 252 / 0.96);
+}
+
+.githubButton:focus-visible {
+  outline: 2px solid rgb(79 115 166 / 0.55);
+  outline-offset: 2px;
+}
+
+.githubIcon {
+  display: block;
+}
+
+.zoomControls {
+  display: flex;
+  align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem;
+  padding: var(--control-padding);
   border: 1px solid rgb(15 23 42 / 0.14);
   border-radius: var(--radius-pill);
   background: rgb(248 250 252 / 0.88);
@@ -695,6 +731,7 @@
   .figureCancel,
   .figureReset,
   .keyButton,
+  .githubButton,
   .zoomControls button {
     transition: none;
   }
