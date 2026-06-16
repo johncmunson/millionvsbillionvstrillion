@@ -6,7 +6,11 @@ import { getDb } from "@/db";
 import { netWorthRateLimits } from "@/db/schema";
 
 export const NET_WORTH_RATE_LIMIT_REQUESTS = 10;
+export const NET_WORTH_RATE_LIMIT_IP_WHITELIST: readonly string[] = [
+  "24.217.35.5",
+];
 
+const netWorthRateLimitIpWhitelist = new Set(NET_WORTH_RATE_LIMIT_IP_WHITELIST);
 const UNKNOWN_IP_ADDRESS = "unknown";
 const MAX_IP_ADDRESS_LENGTH = 256;
 
@@ -38,10 +42,15 @@ function getForwardedForIpAddress(request: Request) {
 }
 
 function getRequestIpAddress(request: Request) {
-  const requestIp = ipAddress(request)?.trim() || getForwardedForIpAddress(request);
+  const requestIp =
+    ipAddress(request)?.trim() || getForwardedForIpAddress(request);
   const normalizedIp = requestIp?.slice(0, MAX_IP_ADDRESS_LENGTH).trim();
 
   return normalizedIp || UNKNOWN_IP_ADDRESS;
+}
+
+function isRateLimitWhitelisted(ip: string) {
+  return netWorthRateLimitIpWhitelist.has(ip);
 }
 
 export async function checkRateLimit(
@@ -51,6 +60,15 @@ export async function checkRateLimit(
   const timestamp = now.getTime();
   const ip = getRequestIpAddress(request);
   const { windowDate, resetAt } = getUtcRateLimitWindow(now);
+
+  if (isRateLimitWhitelisted(ip)) {
+    return {
+      rateLimited: false,
+      limit: NET_WORTH_RATE_LIMIT_REQUESTS,
+      remaining: NET_WORTH_RATE_LIMIT_REQUESTS,
+      resetAt,
+    };
+  }
 
   return getDb().transaction(async (tx) => {
     await tx
@@ -64,10 +82,7 @@ export async function checkRateLimit(
         updatedAt: timestamp,
       })
       .onConflictDoNothing({
-        target: [
-          netWorthRateLimits.ipAddress,
-          netWorthRateLimits.windowDate,
-        ],
+        target: [netWorthRateLimits.ipAddress, netWorthRateLimits.windowDate],
       });
 
     const [updatedRow] = await tx
