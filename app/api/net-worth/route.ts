@@ -1,4 +1,4 @@
-import { openai } from "@ai-sdk/openai";
+import { openai, OpenAILanguageModelResponsesOptions } from "@ai-sdk/openai";
 import { generateText, Output, stepCountIs } from "ai";
 import { after } from "next/server";
 import { z } from "zod";
@@ -15,7 +15,7 @@ import {
 } from "@/lib/net-worth-cache";
 import { checkRateLimit, type RateLimitResult } from "@/lib/rate-limit";
 
-export const maxDuration = 30;
+export const maxDuration = 300;
 
 const requestSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -48,7 +48,9 @@ const lookupOutputSchema = z.object({
           ),
         url: z
           .string()
-          .describe("Absolute HTTP or HTTPS URL for the source page used for the estimate."),
+          .describe(
+            "Absolute HTTP or HTTPS URL for the source page used for the estimate.",
+          ),
       }),
     )
     .describe(
@@ -230,15 +232,19 @@ export async function POST(request: Request) {
   try {
     const { output } = await generateText({
       model: openai("gpt-5.5"),
+      providerOptions: {
+        openai: {
+          serviceTier: "priority",
+        } satisfies OpenAILanguageModelResponsesOptions,
+      },
       tools: {
         web_search: openai.tools.webSearch({ searchContextSize: "high" }),
       },
       output: Output.object({
         schema: lookupOutputSchema,
       }),
-      stopWhen: stepCountIs(5),
-      system:
-        `You research public-figure net worth estimates. Use web_search for current, publicly available net worth estimates and credible sources. Prefer reputable sources such as Forbes, Bloomberg, official rich lists, Wikipedia pages that cite financial sources, and major business publications. Return only the structured output requested by the schema. Do not invent figures, sources, URLs, or aliases. Do not perform web searches solely to discover aliases. Only include aliases that are unambiguous on their own. Set is_cacheable to false for ambiguous, not-found, or uncertain results. Limit sources to ${MAX_SOURCES} and aliases to ${MAX_ALIASES}.`,
+      stopWhen: stepCountIs(3),
+      system: `You research public-figure net worth estimates. Use web_search for current, publicly available net worth estimates and credible sources. Prefer reputable sources such as Forbes, Bloomberg, official rich lists, Wikipedia pages that cite financial sources, and major business publications. Return only the structured output requested by the schema. Do not invent figures, sources, URLs, or aliases. Do not perform web searches solely to discover aliases. Only include aliases that are unambiguous on their own. Set is_cacheable to false for ambiguous, not-found, or uncertain results. Limit sources to ${MAX_SOURCES} and aliases to ${MAX_ALIASES}.`,
       prompt: `Find the current publicly available estimated net worth for this person: ${name}
 
 Rules:
